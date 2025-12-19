@@ -11,7 +11,7 @@
         "dotenv": "^10.0.0",
         "express": "4.17.1",
         "mongodb": "7.0.0",
-        "mongoose": "^5.10.9"
+        "mongoose": "^8.0.0"
     },
     "devDependencies": {
         "@types/dotenv": "^6.1.1"

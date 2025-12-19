@@ -10,9 +10,11 @@ app.use(express.json())
 
 app.use(cors())
 
-console.log(process.env.MONGGO_URL)
-    mongoose
-    .connect("mongodb+srv://20225094:20225094@cluster0.c05jlrx.mongodb.net/IT4409")
+const mongoUrl = process.env.MONGO_URL || "mongodb+srv://20225094:20225094@cluster0.c05jlrx.mongodb.net/IT4409"
+console.log('Connecting to MongoDB...')
+
+mongoose
+    .connect(mongoUrl)
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.error("MongoDB Error:", err))
 
@@ -137,6 +139,7 @@ app.delete('/api/users/:id', async (req, res) => {
   return res.json({ message: 'User deleted successfully' })
 })  
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000')
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`)
 })
