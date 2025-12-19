@@ -1,0 +1,42 @@
+
+
+1. XỬ LÝ KHI TRUYỀN EMAIL ĐÃ TỒN TẠI (POST /api/users)
+-------------------------------------------------------
+
+Khi tạo user mới qua POST request, cần kiểm tra email đã tồn tại trong database chưa.
+
+Cách làm:
+- Sử dụng User.findOne({ email }) để tìm user có email trùng
+- Nếu tìm thấy (existingUser !== null), trả về lỗi 400 với thông báo "Email already exists"
+- Nếu không tìm thấy, tiếp tục tạo user mới
+
+
+Giải thích:
+- User.findOne({ email }): Tìm một document trong collection có email khớp với email được truyền vào
+- Nếu tìm thấy, existingUser sẽ chứa object user đó (truthy value)
+- Nếu không tìm thấy, existingUser sẽ là null (falsy value)
+- Kiểm tra if (existingUser) để xác định email đã tồn tại hay chưa
+- Trả về status 400 (Bad Request) vì đây là lỗi do client gửi dữ liệu không hợp lệ
+
+
+2. SỬ DỤNG Promise.all CHO TRUY VẤN SONG SONG (GET /api/users)
+---------------------------------------------------------------
+
+Trong GET request để lấy danh sách users có phân trang, cần thực hiện 2 truy vấn:
+1. User.find() - Lấy danh sách users theo filter, skip, limit
+2. User.countDocuments() - Đếm tổng số users theo filter để tính totalPages
+
+Cách làm:
+- Sử dụng Promise.all() để thực hiện 2 truy vấn song song (parallel) thay vì tuần tự (sequential)
+- Điều này giúp giảm thời gian xử lý vì 2 truy vấn chạy đồng thời thay vì chờ nhau
+
+Giải thích:
+- Promise.all([...]): Nhận vào một mảng các Promise và chờ tất cả chúng hoàn thành
+- Promise.all chạy các Promise song song, không phải tuần tự
+- Kết quả trả về là một mảng theo đúng thứ tự các Promise được truyền vào
+- Destructuring [users, total] để lấy kết quả:
+  * users: kết quả từ User.find() - mảng các user documents
+  * total: kết quả từ User.countDocuments() - số lượng documents
+
+
+

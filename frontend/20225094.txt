@@ -1,0 +1,74 @@
+BACKEND
+
+1. VALIDATION DỮ LIỆU ĐẦU VÀO
+
+- Tên, tuổi, email không được đẻ trống
+- Tuổi không nhỏ hơn 0
+- Email không được trùng lặp, và đúng định dạng 
+
+
+2. KIỂM TRA EMAIL DUY NHẤT
+
+Cách làm:
+- Sử dụng User.findOne({ email: email }) để tìm user có email trùng
+- Nếu tìm thấy (existingUser !== null), trả về lỗi 400 với thông báo "Email đã tồn tại trong hệ thống"
+- Nếu không tìm thấy, tiếp tục tạo user mới
+
+Giải thích:
+- User.findOne() trả về document đầu tiên khớp với điều kiện hoặc null
+- Trả về status 400 (Bad Request) vì đây là lỗi do client gửi dữ liệu không hợp lệ
+
+
+FRONTEND
+
+1. STT TĂNG DẦN THEO TOÀN BỘ CÁC TRANG
+
+Cách làm:
+- Tính startIndex = (page - 1) * limit
+- STT = startIndex + index + 1
+
+Giải thích:
+- startIndex: số thứ tự bắt đầu của trang hiện tại
+  Ví dụ: page 1, limit 5 → startIndex = 0 → STT: 1, 2, 3, 4, 5
+
+2. PAGE CHUYỂN VỀ 1 KHI THAY LIMIT
+
+Cách làm:
+- Trong component Pagination, khi onChange của select limit
+- Gọi onLimitChange(newLimit) để cập nhật limit
+- Đồng thời gọi onPageChange(1) để reset về trang 1
+
+
+3. KIỂM TRA DỮ LIỆU ĐẦU VÀO
+
+Cách làm:
+- Tạo hàm validate() trong component UserModal
+- Kiểm tra từng trường với các điều kiện cụ thể
+- Lưu lỗi vào state errors để hiển thị dưới mỗi input
+- Chỉ submit khi không có lỗi
+
+Validation:
+
+- Tên, tuổi, email không được đẻ trống
+- Tuổi không nhỏ hơn 0
+- Email không được trùng lặp, và đúng định dạng 
+
+4. BỔ SUNG CÁC THÔNG BÁO LỖI
+
+Cách làm:
+- Xử lý lỗi từ server response và map vào các trường tương ứng
+- Hiển thị thông báo lỗi cụ thể cho từng trường hợp
+
+Chi tiết:
+   - Email trùng lặp:
+     * Server trả về lỗi 400 với message chứa "Email đã tồn tại" hoặc "already exists"
+     * Frontend phát hiện và set errors.email = "Email này đã tồn tại trong hệ thống"
+
+   - Dữ liệu chưa hợp lệ/còn thiếu:
+     * Server trả về lỗi 400 với message cụ thể 
+     * Frontend phân tích message và map vào trường tương ứng
+
+   - Lỗi khác:
+     * Lỗi 404: "Không tìm thấy người dùng"
+     * Lỗi 500: "Lỗi máy chủ (500): Vui lòng thử lại sau"
+     * Hiển thị bằng alert
